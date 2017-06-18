@@ -1,4 +1,4 @@
-module Haskell99Problems.Arithmetic where
+module H99.Arithmetic where
 
 {-
 Problem 31

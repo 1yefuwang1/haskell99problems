@@ -1,6 +1,6 @@
-module Haskell99Problems.ArithmeticSpec (spec) where
+module H99.ArithmeticSpec (spec) where
 
-import           Haskell99Problems.Arithmetic
+import           H99.Arithmetic
 import           Test.Hspec
 
 spec :: Spec
