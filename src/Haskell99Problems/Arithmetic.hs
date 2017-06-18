@@ -38,3 +38,39 @@ myGCD a b
   | r == 0 = abs b
   | otherwise = myGCD b r
   where r = a `mod` b
+
+{-
+Problem 33
+(*) Determine whether two positive integer numbers are coprime. Two numbers are coprime if their greatest common divisor equals 1.
+
+Example:
+
+* (coprime 35 64)
+T
+Example in Haskell:
+
+* coprime 35 64
+True
+-}
+coprime a b = myGCD a b == 1
+
+{-
+Problem 34
+(**) Calculate Euler's totient function phi(m).
+
+Euler's so-called totient function phi(m) is defined as the number of positive integers r (1 <= r < m) that are coprime to m.
+
+Example: m = 10: r = 1,3,7,9; thus phi(m) = 4. Note the special case: phi(1) = 1.
+
+Example:
+
+* (totient-phi 10)
+4
+Example in Haskell:
+
+* totient 10
+4
+-}
+totient :: Int -> Int
+totient 1 = 1
+totient n = length $ filter (coprime n) [1..n-1]

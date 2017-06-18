@@ -12,3 +12,9 @@ spec =
     it "Problem 32: myGCD" $ do
       [myGCD 36 63, myGCD (-3) (-6), myGCD (-3) 6] `shouldBe` [9,3,3]
 
+    it "Problem 33: coprime" $ do
+      coprime 2 3 `shouldBe` True
+      coprime 2 4 `shouldBe` False
+
+    it "Problem 34: totient" $ do
+      map totient [2, 10] `shouldBe` [1, 4]
