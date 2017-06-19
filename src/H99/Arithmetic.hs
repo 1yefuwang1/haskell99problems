@@ -74,3 +74,30 @@ Example in Haskell:
 totient :: Int -> Int
 totient 1 = 1
 totient n = length $ filter (coprime n) [1..n-1]
+
+
+ {-
+ Problem 35
+(**) Determine the prime factors of a given positive integer. Construct a flat list containing the prime factors in ascending order.
+
+Example:
+
+* (prime-factors 315)
+(3 3 5 7)
+Example in Haskell:
+
+> primeFactors 315
+[3, 3, 5, 7]
+ -}
+primeFactors :: Int -> [Int]
+primeFactors 1 = []
+primeFactors n = spf : primeFactors (n `div` spf)
+  where
+    spf = smallestPrimeFactor primes n
+    smallestPrimeFactor (p:ps) n =
+      if n `mod` p == 0
+        then p
+        else smallestPrimeFactor ps n
+    primes = filterPrime [2..]
+    filterPrime (x:xs) = x : filterPrime [x' | x' <- xs, x' `mod` x /= 0]
+primeFactors _ = error "invalid input"

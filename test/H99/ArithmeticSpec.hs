@@ -18,3 +18,7 @@ spec =
 
     it "Problem 34: totient" $ do
       map totient [2, 10] `shouldBe` [1, 4]
+
+    it "Problem 35: primeFactors" $ do
+      primeFactors 2 `shouldBe` [2]
+      primeFactors 315 `shouldBe` [3, 3, 5, 7]
