@@ -1,5 +1,7 @@
 module H99.Arithmetic where
 
+import           Data.List
+
 {-
 Problem 31
 (**) Determine whether a given integer number is prime.
@@ -101,3 +103,22 @@ primeFactors n = spf : primeFactors (n `div` spf)
     primes = filterPrime [2..]
     filterPrime (x:xs) = x : filterPrime [x' | x' <- xs, x' `mod` x /= 0]
 primeFactors _ = error "invalid input"
+
+{-
+Problem 36
+(**) Determine the prime factors of a given positive integer.
+
+Construct a list containing the prime factors and their multiplicity.
+
+Example:
+
+* (prime-factors-mult 315)
+((3 2) (5 1) (7 1))
+Example in Haskell:
+
+*Main> prime_factors_mult 315
+[(3,2),(5,1),(7,1)]
+-}
+primeFactorsMult :: Int -> [(Int, Int)]
+primeFactorsMult = toPair . group . primeFactors
+  where toPair = map (\x -> (head x, length x))

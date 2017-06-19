@@ -22,3 +22,6 @@ spec =
     it "Problem 35: primeFactors" $ do
       primeFactors 2 `shouldBe` [2]
       primeFactors 315 `shouldBe` [3, 3, 5, 7]
+
+    it "Problem 36: primeFactorsMult" $ do
+      primeFactorsMult 315 `shouldBe` [(3, 2), (5, 1), (7, 1)]
