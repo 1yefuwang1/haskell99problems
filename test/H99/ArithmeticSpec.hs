@@ -25,3 +25,12 @@ spec =
 
     it "Problem 36: primeFactorsMult" $ do
       primeFactorsMult 315 `shouldBe` [(3, 2), (5, 1), (7, 1)]
+
+    it "Problem 37: totientImproved" $ do
+      map totientImproved [2, 10] `shouldBe` [1, 4]
+
+    it "Problem 38: no solution required" $ do
+      1 `shouldBe` 1
+
+    it "Problem 39: primesR" $ do
+      primesR 10 20 `shouldBe` [11, 13, 17, 19]

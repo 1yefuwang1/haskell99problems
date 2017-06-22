@@ -54,6 +54,7 @@ Example in Haskell:
 * coprime 35 64
 True
 -}
+coprime :: Integral a => a -> a -> Bool
 coprime a b = myGCD a b == 1
 
 {-
@@ -122,3 +123,44 @@ Example in Haskell:
 primeFactorsMult :: Int -> [(Int, Int)]
 primeFactorsMult = toPair . group . primeFactors
   where toPair = map (\x -> (head x, length x))
+
+{-
+ Problem 37
+(**) Calculate Euler's totient function phi(m) (improved).
+
+See problem 34 for the definition of Euler's totient function. If the list of the prime factors of a number m is known in the form of problem 36 then the function phi(m) can be efficiently calculated as follows: Let ((p1 m1) (p2 m2) (p3 m3) ...) be the list of prime factors (and their multiplicities) of a given number m. Then phi(m) can be calculated with the following formula:
+
+phi(m) = (p1 - 1) * p1 ** (m1 - 1) *
+         (p2 - 1) * p2 ** (m2 - 1) *
+         (p3 - 1) * p3 ** (m3 - 1) * ...
+Note that a ** b stands for the b'th power of a.
+-}
+totientImproved :: Int -> Int
+totientImproved m = product [(p - 1) * p ^ (m' - 1) | (p, m') <- primeFactorsMult m]
+
+{-
+Problem 38
+(*) Compare the two methods of calculating Euler's totient function.
+
+Use the solutions of problems 34 and 37 to compare the algorithms. Take the number of reductions as a measure for efficiency. Try to calculate phi(10090) as an example.
+
+(no solution required)
+-}
+
+{-
+Problem 39
+(*) A list of prime numbers.
+
+Given a range of integers by its lower and upper limit, construct a list of all prime numbers in that range.
+
+Example in Haskell:
+
+P29> primesR 10 20
+[11,13,17,19]
+-}
+primesR :: Int -> Int -> [Int]
+primesR l u = takeWhile (u>) $ dropWhile (l>) primes
+  where
+    primes = filterPrime [2..]
+    filterPrime (x:xs) = x : filterPrime [x' | x' <- xs, x' `mod` x /= 0]
+
