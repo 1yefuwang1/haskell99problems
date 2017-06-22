@@ -36,4 +36,9 @@ spec =
       primesR 10 20 `shouldBe` [11, 13, 17, 19]
 
     it "Problem 40: goldback" $ do
-      goldback 28 `shouldBe` (5, 23)
+      goldbach 28 `shouldBe` (5, 23)
+
+    it "Problem 41: goldbackList, goldbackList'" $ do
+      goldbachList 9 20 `shouldBe` [(3,7),(5,7),(3,11),(3,13),(5,13),(3,17)]
+      goldbachList' 4 2000 50 `shouldBe` [(73,919),(61,1321),(67,1789),(61,1867)]
+
