@@ -34,3 +34,6 @@ spec =
 
     it "Problem 39: primesR" $ do
       primesR 10 20 `shouldBe` [11, 13, 17, 19]
+
+    it "Problem 40: goldback" $ do
+      goldback 28 `shouldBe` (5, 23)

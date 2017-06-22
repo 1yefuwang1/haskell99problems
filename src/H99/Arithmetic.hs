@@ -164,3 +164,37 @@ primesR l u = takeWhile (u>) $ dropWhile (l>) primes
     primes = filterPrime [2..]
     filterPrime (x:xs) = x : filterPrime [x' | x' <- xs, x' `mod` x /= 0]
 
+{-
+Problem 40
+(**) Goldbach's conjecture.
+
+Goldbach's conjecture says that every positive even number greater than 2 is the sum of two prime numbers. Example: 28 = 5 + 23. It is one of the most famous facts in number theory that has not been proved to be correct in the general case. It has been numerically confirmed up to very large numbers (much larger than we can go with our Prolog system). Write a predicate to find the two prime numbers that sum up to a given even integer.
+
+Example:
+
+* (goldbach 28)
+(5 23)
+Example in Haskell:
+
+*goldbach 28
+(5, 23)
+-}
+goldback :: Int -> (Int, Int)
+goldback n
+  | odd n || n <= 2 = error "Input should be even and greater than 2!"
+  | otherwise = doGoldback primeRange
+  where
+    primeRange = primesR 2 n
+
+    doGoldback range
+      | r == 0 = (h, l)
+      | r > 0 = doGoldback $ take (length range - 1) range
+      | r < 0 = doGoldback $ tail range
+      where
+        h = head range
+        l = last range
+        r = h + l - n
+
+
+
+
