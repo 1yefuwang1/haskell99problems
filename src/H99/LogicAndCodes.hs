@@ -1,6 +1,8 @@
 module H99.LogicAndCodes where
 
 import           Control.Monad (replicateM)
+import           Data.Function (on)
+import           Data.List     (sortBy)
 
 {-
 Problem 46
@@ -170,3 +172,47 @@ gray n =
     doGray = prepend' ('0') prev ++ prepend' ('1') (reverse prev)
     prepend' x = map $ (x:)
     prev = gray (n-1)
+
+{-
+Problem 50
+(***) Huffman codes.
+
+We suppose a set of symbols with their frequencies, given as a list of fr(S,F) terms. Example: [fr(a,45),fr(b,13),fr(c,12),fr(d,16),fr(e,9),fr(f,5)]. Our objective is to construct a list hc(S,C) terms, where C is the Huffman code word for the symbol S. In our example, the result could be Hs = [hc(a,'0'), hc(b,'101'), hc(c,'100'), hc(d,'111'), hc(e,'1101'), hc(f,'1100')] [hc(a,'01'),...etc.]. The task shall be performed by the predicate huffman/2 defined as follows:
+
+% huffman(Fs,Hs) :- Hs is the Huffman code table for the frequency table Fs
+Example in Haskell:
+
+*Exercises> huffman [('a',45),('b',13),('c',12),('d',16),('e',9),('f',5)]
+[('a',"0"),('b',"101"),('c',"100"),('d',j"111"),('e',"1101"),('f',"1100")]
+-}
+-- for simplicity, use String to represent each symbol
+data Tree a = Tree {value :: a, left :: Tree a, right :: Tree a}
+            | Null
+huffman :: [(String, Int)] -> [(String, String)]
+huffman [] = []
+huffman list = sortBy (compare `on` fst) . encode . makeHuffmanTree $ trees
+  where
+    encode :: Tree (String, Int) -> [(String, String)]
+    encode htree = doEncode htree [] []
+
+    doEncode :: Tree (String, Int) -> String -> [(String, String)] -> [(String, String)]
+    doEncode tree code acc = case tree of
+      Tree (symb, _) Null Null -> (symb, code) : acc
+      Tree (_, _) l r -> (doEncode l (code ++ "0") acc) ++ (doEncode r (code ++ "1") acc)
+
+
+    makeHuffmanTree :: [Tree (String, Int)] -> Tree (String, Int)
+    makeHuffmanTree (x:xs)
+      | null xs = x
+      | otherwise = makeHuffmanTree $ sort' $ combine x (head xs) : tail xs
+
+    toTree (symb, freq) = Tree (symb, freq) Null Null
+
+    trees = sort' $ map toTree list
+
+    sort' trees' = sortBy (compare `on` (snd . value)) trees'
+
+    combine l@(Tree (str, freq) _ _) r@(Tree (str', freq') _ _)
+      | freq < freq' = Tree (str ++ str', freq + freq') l r
+      | otherwise = Tree (str' ++ str, freq + freq') r l
+
