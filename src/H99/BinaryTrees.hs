@@ -92,7 +92,7 @@ cbalTree 1 = return $ leaf 'x'
 cbalTree n =
   if odd n
     then do
-      [l, r] <- replicateM 2 $ cbalTree $ (n - 1) `div` 2
+      [l, r] <- replicateM 2 $ cbalTree $ half
       return $ Branch 'x' l r
     else concat $ do
       l <- cbalTree (half + 1)
@@ -100,3 +100,19 @@ cbalTree n =
       return $ [Branch 'x' l r, Branch 'x' r l]
       where
         half = (n - 1) `div` 2
+
+{-
+Problem 56
+(**) Symmetric binary trees
+
+Let us call a binary tree symmetric if you can draw a vertical line through the root node and then the right subtree is the mirror image of the left subtree. Write a predicate symmetric/1 to check whether a given binary tree is symmetric. Hint: Write a predicate mirror/2 first to check whether one tree is the mirror image of another. We are only interested in the structure, not in the contents of the nodes.
+
+Example in Haskell:
+
+*Main> symmetric (Branch 'x' (Branch 'x' Empty Empty) Empty)
+False
+*Main> symmetric (Branch 'x' (Branch 'x' Empty Empty) (Branch 'x' Empty Empty))
+True
+-}
+symmetric :: Tree Char -> Bool
+symmetric tree = True
