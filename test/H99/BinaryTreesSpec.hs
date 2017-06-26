@@ -18,3 +18,8 @@ spec =
           Branch 'x' (Branch 'x' Empty (Branch 'x' Empty Empty)) (Branch 'x' Empty Empty),
           Branch 'x' (Branch 'x' Empty Empty) (Branch 'x' Empty (Branch 'x' Empty Empty))]
 
+    it "Problem 56: symmetric" $ do
+      symmetric (Branch 'x' (Branch 'x' Empty Empty) Empty) `shouldBe` False
+      symmetric Empty `shouldBe` True
+      symmetric (Branch 'x' Empty Empty) `shouldBe` True
+      symmetric (Branch 'x' (Branch 'x' Empty Empty) (Branch 'x' Empty Empty)) `shouldBe` True

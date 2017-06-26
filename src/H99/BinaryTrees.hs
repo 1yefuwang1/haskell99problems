@@ -3,7 +3,7 @@ module H99.BinaryTrees where
 import           Control.Monad (replicateM)
 
 data Tree a = Empty
-            | Branch a (Tree a) (Tree a)
+            | Branch {value :: a, left :: Tree a, right :: Tree a}
             deriving (Show, Eq)
 
 leaf x = Branch x Empty Empty
@@ -115,4 +115,10 @@ False
 True
 -}
 symmetric :: Tree Char -> Bool
-symmetric tree = True
+symmetric Empty                  = True
+symmetric (Branch _ Empty Empty) = True
+symmetric (Branch _ _ Empty)     = False
+symmetric (Branch _ Empty _)     = False
+symmetric (Branch _ l r)         = l `isMirrorOf` r
+  where
+    isMirrorOf l r = left l == right r && right r == left r
