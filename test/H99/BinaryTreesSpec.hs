@@ -20,6 +20,11 @@ spec =
 
     it "Problem 56: symmetric" $ do
       symmetric (Branch 'x' (Branch 'x' Empty Empty) Empty) `shouldBe` False
-      symmetric Empty `shouldBe` True
+      symmetric (Empty :: Tree Int) `shouldBe` True
       symmetric (Branch 'x' Empty Empty) `shouldBe` True
       symmetric (Branch 'x' (Branch 'x' Empty Empty) (Branch 'x' Empty Empty)) `shouldBe` True
+
+    it "Problem 57: Binary seach trees" $ do
+      (symmetric . construct) [5, 3, 18, 1, 4, 12, 21] `shouldBe` True
+      (symmetric . construct) [3, 2, 5, 7, 1] `shouldBe` True
+

@@ -1,6 +1,7 @@
 module H99.BinaryTrees where
 
 import           Control.Monad (replicateM)
+import           Data.List     (foldl')
 
 data Tree a = Empty
             | Branch {value :: a, left :: Tree a, right :: Tree a}
@@ -114,11 +115,51 @@ False
 *Main> symmetric (Branch 'x' (Branch 'x' Empty Empty) (Branch 'x' Empty Empty))
 True
 -}
-symmetric :: Tree Char -> Bool
+symmetric :: Eq a => Tree a -> Bool
 symmetric Empty                  = True
 symmetric (Branch _ Empty Empty) = True
 symmetric (Branch _ _ Empty)     = False
 symmetric (Branch _ Empty _)     = False
 symmetric (Branch _ l r)         = l `isMirrorOf` r
   where
-    isMirrorOf l r = left l == right r && right r == left r
+    isMirrorOf Empty Empty = True
+    isMirrorOf (Branch _ l r) (Branch _ l' r') = l `isMirrorOf` r' && r `isMirrorOf` l'
+    isMirrorOf _ _ = False
+
+{-
+Problem 57
+(**) Binary search trees (dictionaries)
+
+Use the predicate add/3, developed in chapter 4 of the course, to write a predicate to construct a binary search tree from a list of integer numbers.
+
+Example:
+
+* construct([3,2,5,7,1],T).
+T = t(3, t(2, t(1, nil, nil), nil), t(5, nil, t(7, nil, nil)))
+Then use this predicate to test the solution of the problem P56.
+
+Example:
+
+* test-symmetric([5,3,18,1,4,12,21]).
+Yes
+* test-symmetric([3,2,5,7,4]).
+No
+Example in Haskell:
+
+*Main> construct [3, 2, 5, 7, 1]
+Branch 3 (Branch 2 (Branch 1 Empty Empty) Empty) (Branch 5 Empty (Branch 7 Empty Empty))
+*Main> symmetric . construct $ [5, 3, 18, 1, 4, 12, 21]
+True
+*Main> symmetric . construct $ [3, 2, 5, 7, 1]
+True
+-}
+add :: Int -> Tree Int -> Tree Int
+add n Empty = leaf n
+add n (Branch n' l r)
+  | n < n' = Branch n' (add n l) r
+  | n > n' = Branch n' l (add n r)
+  | otherwise = error "n already presented in the tree!"
+
+construct :: [Int] -> Tree Int
+construct ns = foldl' (\acc n -> add n acc) Empty ns
+
