@@ -5,7 +5,7 @@ import           Data.List     (foldl')
 
 data Tree a = Empty
             | Branch {value :: a, left :: Tree a, right :: Tree a}
-            deriving (Show, Eq)
+            deriving (Show, Eq, Ord)
 
 leaf x = Branch x Empty Empty
 
@@ -163,3 +163,43 @@ add n (Branch n' l r)
 construct :: [Int] -> Tree Int
 construct ns = foldl' (\acc n -> add n acc) Empty ns
 
+{-
+Problem 58
+(**) Generate-and-test paradigm
+
+Apply the generate-and-test paradigm to construct all symmetric, completely balanced binary trees with a given number of nodes.
+
+Example:
+
+* sym-cbal-trees(5,Ts).
+Ts = [t(x, t(x, nil, t(x, nil, nil)), t(x, t(x, nil, nil), nil)), t(x, t(x, t(x, nil, nil), nil), t(x, nil, t(x, nil, nil)))]
+Example in Haskell:
+
+*Main> symCbalTrees 5
+[Branch 'x' (Branch 'x' Empty (Branch 'x' Empty Empty)) (Branch 'x' (Branch 'x' Empty Empty) Empty),Branch 'x' (Branch 'x' (Branch 'x' Empty Empty) Empty) (Branch 'x' Empty (Branch 'x' Empty Empty))]
+-}
+symCbalTrees :: Int -> [Tree Char]
+symCbalTrees n = filter symmetric $ cbalTree n
+
+{-
+Problem 59
+(**) Construct height-balanced binary trees
+
+In a height-balanced binary tree, the following property holds for every node: The height of its left subtree and the height of its right subtree are almost equal, which means their difference is not greater than one.
+
+Construct a list of all height-balanced binary trees with the given element and the given maximum height.
+
+Example:
+
+?- hbal_tree(3,T).
+T = t(x, t(x, t(x, nil, nil), t(x, nil, nil)), t(x, t(x, nil, nil), t(x, nil, nil))) ;
+T = t(x, t(x, t(x, nil, nil), t(x, nil, nil)), t(x, t(x, nil, nil), nil)) ;
+etc......No
+Example in Haskell:
+
+*Main> take 4 $ hbalTree 'x' 3
+[Branch 'x' (Branch 'x' Empty Empty) (Branch 'x' Empty (Branch 'x' Empty Empty)),
+ Branch 'x' (Branch 'x' Empty Empty) (Branch 'x' (Branch 'x' Empty Empty) Empty),
+ Branch 'x' (Branch 'x' Empty Empty) (Branch 'x' (Branch 'x' Empty Empty) (Branch 'x' Empty Empty)),
+ Branch 'x' (Branch 'x' Empty (Branch 'x' Empty Empty)) (Branch 'x' Empty Empty)]
+-}

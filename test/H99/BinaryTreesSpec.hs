@@ -1,5 +1,6 @@
 module H99.BinaryTreesSpec (spec) where
 
+import           Data.Set        as S
 import           H99.BinaryTrees
 import           Test.Hspec
 
@@ -27,4 +28,8 @@ spec =
     it "Problem 57: Binary seach trees" $ do
       (symmetric . construct) [5, 3, 18, 1, 4, 12, 21] `shouldBe` True
       (symmetric . construct) [3, 2, 5, 7, 1] `shouldBe` True
+
+    it "Problem 58: symCbalTrees" $ do
+      S.fromList (symCbalTrees 5) `shouldBe`
+        S.fromList [Branch 'x' (Branch 'x' Empty (Branch 'x' Empty Empty)) (Branch 'x' (Branch 'x' Empty Empty) Empty),Branch 'x' (Branch 'x' (Branch 'x' Empty Empty) Empty) (Branch 'x' Empty (Branch 'x' Empty Empty))]
 
