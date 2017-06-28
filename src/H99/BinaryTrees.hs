@@ -7,6 +7,7 @@ data Tree a = Empty
             | Branch {value :: a, left :: Tree a, right :: Tree a}
             deriving (Show, Eq, Ord)
 
+leaf :: a -> Tree a
 leaf x = Branch x Empty Empty
 
 {-
@@ -115,7 +116,7 @@ False
 *Main> symmetric (Branch 'x' (Branch 'x' Empty Empty) (Branch 'x' Empty Empty))
 True
 -}
-symmetric :: Eq a => Tree a -> Bool
+symmetric :: Tree a -> Bool
 symmetric Empty                  = True
 symmetric (Branch _ Empty Empty) = True
 symmetric (Branch _ _ Empty)     = False
@@ -203,3 +204,12 @@ Example in Haskell:
  Branch 'x' (Branch 'x' Empty Empty) (Branch 'x' (Branch 'x' Empty Empty) (Branch 'x' Empty Empty)),
  Branch 'x' (Branch 'x' Empty (Branch 'x' Empty Empty)) (Branch 'x' Empty Empty)]
 -}
+-- default to Tree Char for simplicity
+hbalTree :: Int -> [Tree Char]
+
+hbalTree 0 = return $ Empty
+hbalTree n
+  | n < 0 = []
+  | otherwise =
+    [Branch 'x' l r | (hl, hr) <- [(n-1, n-1), (n-1, n-2), (n-2, n-1)] , l <- hbalTree hl, r <- hbalTree hr]
+

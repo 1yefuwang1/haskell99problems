@@ -33,3 +33,6 @@ spec =
       S.fromList (symCbalTrees 5) `shouldBe`
         S.fromList [Branch 'x' (Branch 'x' Empty (Branch 'x' Empty Empty)) (Branch 'x' (Branch 'x' Empty Empty) Empty),Branch 'x' (Branch 'x' (Branch 'x' Empty Empty) Empty) (Branch 'x' Empty (Branch 'x' Empty Empty))]
 
+    it "Problem 59: hbalTree" $ do
+      hbalTree 0 `shouldBe` [(Empty :: Tree Char)]
+      length (hbalTree 3) `shouldBe` 15
