@@ -36,3 +36,6 @@ spec =
     it "Problem 59: hbalTree" $ do
       hbalTree 0 `shouldBe` [(Empty :: Tree Char)]
       length (hbalTree 3) `shouldBe` 15
+
+    it "Problem 60: hbalTreeNodes" $ do
+      length (hbalTreeNodes 15) `shouldBe` 1553
