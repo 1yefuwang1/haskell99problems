@@ -283,3 +283,22 @@ countLeaves :: Tree a -> Int
 countLeaves Empty                  = 0
 countLeaves (Branch _ Empty Empty) = 1
 countLeaves (Branch _ l r)         = countLeaves l + countLeaves r
+
+{-
+Problem 61A
+Collect the leaves of a binary tree in a list
+
+A leaf is a node with no successors. Write a predicate leaves/2 to collect them in a list.
+
+Example:
+
+% leaves(T,S) :- S is the list of all leaves of the binary tree T
+Example in Haskell:
+
+> leaves tree4
+[4,2]
+-}
+leaves :: Tree a -> [a]
+leaves Empty                  = []
+leaves (Branch v Empty Empty) = [v]
+leaves (Branch _ l r)         = leaves l ++ leaves r

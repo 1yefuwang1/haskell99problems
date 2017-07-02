@@ -43,3 +43,6 @@ spec =
     it "Problem 61: countLeaves" $ do
       countLeaves (Empty :: Tree Char) `shouldBe` 0
       countLeaves (Branch 'x' (Branch 'x' Empty Empty) (Branch 'x' Empty Empty)) `shouldBe` 2
+
+    it "Problem 61A: leaves" $ do
+      leaves (Branch 1 (Branch 2 Empty (Branch 4 Empty Empty)) (Branch 2 Empty Empty)) `shouldBe` [4, 2]
