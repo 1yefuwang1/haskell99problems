@@ -263,3 +263,23 @@ hbalTreeNodes nodeNum =
   where
     countNodes Empty          = 0
     countNodes (Branch _ l r) = 1 + countNodes l + countNodes r
+
+
+{-
+Problem 61
+Count the leaves of a binary tree
+
+A leaf is a node with no successors. Write a predicate count_leaves/2 to count them.
+
+Example:
+
+% count_leaves(T,N) :- the binary tree T has N leaves
+Example in Haskell:
+
+> countLeaves tree4
+2
+-}
+countLeaves :: Tree a -> Int
+countLeaves Empty                  = 0
+countLeaves (Branch _ Empty Empty) = 1
+countLeaves (Branch _ l r)         = countLeaves l + countLeaves r

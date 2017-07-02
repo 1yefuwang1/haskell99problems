@@ -39,3 +39,7 @@ spec =
 
     it "Problem 60: hbalTreeNodes" $ do
       length (hbalTreeNodes 15) `shouldBe` 1553
+
+    it "Problem 61: countLeaves" $ do
+      countLeaves (Empty :: Tree Char) `shouldBe` 0
+      countLeaves (Branch 'x' (Branch 'x' Empty Empty) (Branch 'x' Empty Empty)) `shouldBe` 2
