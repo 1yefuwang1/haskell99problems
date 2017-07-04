@@ -52,3 +52,6 @@ spec =
 
     it "Problem 62B: atLevel" $ do
       atLevel (Branch 1 (Branch 2 Empty (Branch 4 Empty Empty)) (Branch 2 Empty Empty)) 2 `shouldBe` [2, 2]
+
+    it "Problem 63: completeBinaryTree" $ do
+      completeBinaryTree 4 `shouldBe` Branch 'x' (Branch 'x' (Branch 'x' Empty Empty) Empty) (Branch 'x' Empty Empty)
