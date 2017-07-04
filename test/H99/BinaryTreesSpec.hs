@@ -46,3 +46,6 @@ spec =
 
     it "Problem 61A: leaves" $ do
       leaves (Branch 1 (Branch 2 Empty (Branch 4 Empty Empty)) (Branch 2 Empty Empty)) `shouldBe` [4, 2]
+
+    it "Problem 62: internals" $ do
+      internals (Branch 1 (Branch 2 Empty (Branch 4 Empty Empty)) (Branch 2 Empty Empty)) `shouldBe` [1, 2]
