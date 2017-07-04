@@ -49,3 +49,6 @@ spec =
 
     it "Problem 62: internals" $ do
       internals (Branch 1 (Branch 2 Empty (Branch 4 Empty Empty)) (Branch 2 Empty Empty)) `shouldBe` [1, 2]
+
+    it "Problem 62B: atLevel" $ do
+      atLevel (Branch 1 (Branch 2 Empty (Branch 4 Empty Empty)) (Branch 2 Empty Empty)) 2 `shouldBe` [2, 2]

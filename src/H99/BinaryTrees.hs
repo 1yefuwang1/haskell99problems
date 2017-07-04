@@ -321,3 +321,28 @@ internals :: Tree a -> [a]
 internals Empty                  = []
 internals (Branch x Empty Empty) = []
 internals (Branch x l r)         = x : (internals l ++ internals r)
+
+{-
+Problem 62B
+Collect the nodes at a given level in a list
+
+A node of a binary tree is at level N if the path from the root to the node has length N-1. The root node is at level 1. Write a predicate atlevel/3 to collect all nodes at a given level in a list.
+
+Example:
+
+% atlevel(T,L,S) :- S is the list of nodes of the binary tree T at level L
+Example in Haskell:
+
+Prelude>atLevel tree4 2
+Prelude>[2,2]
+-}
+atLevel :: Tree a -> Int -> [a]
+atLevel tree level = doAtLevel tree level 1
+  where
+    doAtLevel Empty _ _ = []
+    doAtLevel (Branch x l r) targetLevel curLevel
+      | targetLevel == curLevel = return x
+      | targetLevel > curLevel = doAtLevel l targetLevel nextLevel ++ doAtLevel r targetLevel nextLevel
+      | otherwise = error "targetLevel < curLevel considered impossible"
+      where
+        nextLevel = curLevel + 1
