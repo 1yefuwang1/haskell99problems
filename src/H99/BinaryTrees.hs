@@ -1,7 +1,7 @@
 module H99.BinaryTrees where
 
 import           Control.Monad (replicateM)
-import           Data.List     (foldl')
+import           Data.List     (foldl', sort)
 
 data Tree a = Empty
             | Branch {value :: a, left :: Tree a, right :: Tree a}
@@ -382,3 +382,16 @@ completeBinaryTree n = construct n 1
         leftIndex = 2 * cur
         rightIndex = leftIndex + 1
 
+isCompleteBinaryTree :: Tree a -> Bool
+isCompleteBinaryTree Empty = True
+isCompleteBinaryTree tree  = (isAscending . sort) (traverseAndCollect tree 1) 1
+isAscending :: [Int] -> Int -> Bool
+isAscending [] _     = True
+isAscending (x:xs) n = x == n && isAscending xs (n+1)
+
+traverseAndCollect :: Tree a -> Int -> [Int]
+traverseAndCollect Empty _ = []
+traverseAndCollect (Branch _ l r) index = [index] ++ (traverseAndCollect l leftIndex ++ traverseAndCollect r rightIndex)
+  where
+    leftIndex = index * 2
+    rightIndex = leftIndex + 1

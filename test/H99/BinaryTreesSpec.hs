@@ -55,3 +55,5 @@ spec =
 
     it "Problem 63: completeBinaryTree" $ do
       completeBinaryTree 4 `shouldBe` Branch 'x' (Branch 'x' (Branch 'x' Empty Empty) Empty) (Branch 'x' Empty Empty)
+      isCompleteBinaryTree (completeBinaryTree 4) `shouldBe` True
+      isCompleteBinaryTree ((hbalTree 5) !! 2) `shouldBe` False
