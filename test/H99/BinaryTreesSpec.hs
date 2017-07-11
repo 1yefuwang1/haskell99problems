@@ -57,3 +57,6 @@ spec =
       completeBinaryTree 4 `shouldBe` Branch 'x' (Branch 'x' (Branch 'x' Empty Empty) Empty) (Branch 'x' Empty Empty)
       isCompleteBinaryTree (completeBinaryTree 4) `shouldBe` True
       isCompleteBinaryTree ((hbalTree 5) !! 2) `shouldBe` False
+
+    it "Problem 64: layout" $ do
+      layout (Branch 1 (Branch 2 Empty (Branch 4 Empty Empty)) (Branch 2 Empty Empty)) `shouldBe` Branch {value = (1,(3,1)), left = Branch {value = (2,(1,2)), left = Empty, right = Branch {value = (4,(2,3)), left = Empty, right = Empty}}, right = Branch {value = (2,(4,2)), left = Empty, right = Empty}}
