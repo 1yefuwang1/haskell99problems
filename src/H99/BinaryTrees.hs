@@ -517,8 +517,16 @@ layout' t = fst $ (evalState (go t)) (1, 1)
 
     go (Branch v l r) = do
       (x, y) <- get
-      put (x, y+1)
+      put (x, y + 1)
       (l', x') <- go l
-      put (x'+1, y+1)
-      (r', x'') <- go r
-      return (Branch (v, (x', y)) l' r', x'')
+      let deltaUp = 2^(depth - y)
+      let deltaDown = deltaUp `div` 2
+      let r' = construct' (x' + deltaDown, y + 1) r
+      return (Branch (v, (x', y)) l' r', x' + deltaUp)
+
+    construct' :: (Int, Int) -> Tree a -> Tree (a, Pos)
+    construct' _ Empty = Empty
+    construct' (x, y) (Branch v l r) =
+      Branch (v, (x, y)) (construct' (x - delta, y + 1) l) (construct' (x + delta, y + 1) r)
+      where
+        delta = 2^(depth - y - 1)

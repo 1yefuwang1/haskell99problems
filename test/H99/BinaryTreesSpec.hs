@@ -60,3 +60,7 @@ spec =
 
     it "Problem 64: layout" $ do
       layout (Branch 1 (Branch 2 Empty (Branch 4 Empty Empty)) (Branch 2 Empty Empty)) `shouldBe` Branch {value = (1,(3,1)), left = Branch {value = (2,(1,2)), left = Empty, right = Branch {value = (4,(2,3)), left = Empty, right = Empty}}, right = Branch {value = (2,(4,2)), left = Empty, right = Empty}}
+
+    it "Probelm 65: layout'" $ do
+      layout' (Branch 1 (Branch 2 (Branch 3 Empty Empty) (Branch 4 Empty Empty)) (Branch 2 Empty Empty))
+        `shouldBe` Branch {value = (1,(4,1)), left = Branch {value = (2,(2,2)), left = Branch {value = (3,(1,3)), left = Empty, right = Empty}, right = Branch {value = (4,(3,3)), left = Empty, right = Empty}}, right = Branch {value = (2,(6,2)), left = Empty, right = Empty}}
