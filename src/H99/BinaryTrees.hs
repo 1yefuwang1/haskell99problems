@@ -3,7 +3,6 @@ module H99.BinaryTrees where
 import           Control.Monad       (replicateM)
 import           Control.Monad.State
 import           Data.List           (foldl', sort)
-import           Debug.Trace         (trace)
 
 data Tree a = Empty
             | Branch {value :: a, left :: Tree a, right :: Tree a}
@@ -91,17 +90,17 @@ Branch 'x' (Branch 'x' (Branch 'x' Empty Empty)
 -}
 
 cbalTree :: Int -> [Tree Char]
-cbalTree 0 = return $ Empty
+cbalTree 0 = return Empty
 cbalTree 1 = return $ leaf 'x'
 cbalTree n =
   if odd n
     then do
-      [l, r] <- replicateM 2 $ cbalTree $ half
+      [l, r] <- replicateM 2 $ cbalTree half
       return $ Branch 'x' l r
     else concat $ do
       l <- cbalTree (half + 1)
       r <- cbalTree half
-      return $ [Branch 'x' l r, Branch 'x' r l]
+      return [Branch 'x' l r, Branch 'x' r l]
       where
         half = (n - 1) `div` 2
 
@@ -164,7 +163,7 @@ add n (Branch n' l r)
   | otherwise = error "n already presented in the tree!"
 
 construct :: [Int] -> Tree Int
-construct ns = foldl' (\acc n -> add n acc) Empty ns
+construct = foldl' (flip add) Empty
 
 {-
 Problem 58
@@ -209,7 +208,7 @@ Example in Haskell:
 -- default to Tree Char for simplicity
 hbalTree :: Int -> [Tree Char]
 
-hbalTree 0 = return $ Empty
+hbalTree 0 = return Empty
 hbalTree n
   | n < 0 = []
   | otherwise =
@@ -261,7 +260,7 @@ minHeight n = ceiling $ logBase 2 $ fromIntegral $ n + 1
 -- default to Tree Char for simplicity
 hbalTreeNodes :: Int -> [Tree Char]
 hbalTreeNodes nodeNum =
-  filter ((nodeNum ==) . countNodes) $ concatMap (hbalTree) [minHeight nodeNum..maxHeight nodeNum]
+  filter ((nodeNum ==) . countNodes) $ concatMap hbalTree [minHeight nodeNum..maxHeight nodeNum]
   where
     countNodes Empty          = 0
     countNodes (Branch _ l r) = 1 + countNodes l + countNodes r
@@ -444,7 +443,7 @@ Branch ('n',(8,1)) (Branch ('k',(6,2)) (Branch ('c',(2,3)) ...
 type Pos = (Int, Int)
 
 layout :: Tree a -> Tree (a, Pos)
-layout t = fst $ (evalState (go t)) (1, 1)
+layout t = fst $ evalState (go t) (1, 1)
   where
     go :: Tree a -> State Pos (Tree (a, Pos), Int)
     go Empty = do
@@ -504,7 +503,7 @@ Example in Haskell:
 Branch ('n',(15,1)) (Branch ('k',(7,2)) (Branch ('c',(3,3)) ...
 -}
 layout' :: Tree a -> Tree (a, Pos)
-layout' t = fst $ (evalState (go t)) (1, 1)
+layout' t = fst $ evalState (go t) (1, 1)
   where
     depth = getMaxDepth t
 
