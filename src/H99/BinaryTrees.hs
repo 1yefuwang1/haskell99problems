@@ -3,6 +3,7 @@ module H99.BinaryTrees where
 import           Control.Monad       (replicateM)
 import           Control.Monad.State
 import           Data.List           (foldl', sort)
+import           Debug.Trace         (trace)
 
 data Tree a = Empty
             | Branch {value :: a, left :: Tree a, right :: Tree a}
@@ -530,3 +531,90 @@ layout' t = fst $ (evalState (go t)) (1, 1)
       Branch (v, (x, y)) (construct' (x - delta, y + 1) l) (construct' (x + delta, y + 1) r)
       where
         delta = 2^(depth - y - 1)
+
+{-
+Problem 66
+Yet another layout strategy is shown in the illustration below:
+
+p66.gif
+
+The method yields a very compact layout while maintaining a certain symmetry in every node. Find out the rules and write the corresponding Prolog predicate. Hint: Consider the horizontal distance between a node and its successor nodes. How tight can you pack together two subtrees to construct the combined binary tree?
+
+Use the same conventions as in problem P64 and P65 and test your predicate in an appropriate way. Note: This is a difficult problem. Don't give up too early!
+
+Which layout do you like most?
+
+Example in Haskell:
+
+> layout tree65
+Branch ('n',(5,1)) (Branch ('k',(3,2)) (Branch ('c',(2,3)) ...
+-}
+layout'' = undefined -- need time to figure it out.
+
+{-
+Problem 67A
+A string representation of binary trees
+
+Somebody represents binary trees as strings of the following type:
+
+a(b(d,e),c(,f(g,)))
+a) Write a Prolog predicate which generates this string representation, if the tree is given as usual (as nil or t(X,L,R) term). Then write a predicate which does this inverse; i.e. given the string representation, construct the tree in the usual form. Finally, combine the two predicates in a single predicate tree_string/2 which can be used in both directions.
+
+Example in Prolog
+
+?- tree_to_string(t(x,t(y,nil,nil),t(a,nil,t(b,nil,nil))),S).
+S = 'x(y,a(,b))'
+?- string_to_tree('x(y,a(,b))',T).
+T = t(x, t(y, nil, nil), t(a, nil, t(b, nil, nil)))
+Example in Haskell:
+
+Main> stringToTree "x(y,a(,b))" >>= print
+Branch 'x' (Branch 'y' Empty Empty) (Branch 'a' Empty (Branch 'b' Empty Empty))
+Main> let t = cbtFromList ['a'..'z'] in stringToTree (treeToString t) >>= print . (== t)
+True
+-}
+treeToString :: Tree Char -> String
+treeToString Empty = ""
+treeToString (Branch c Empty Empty) = [c]
+treeToString (Branch c l r) = c : ("(" ++ treeToString l ++ "," ++ treeToString r ++ ")")
+
+type Index = Int --Index of the correct ','
+type LeftParathesisEncountered = Int
+stringToTree :: String -> Maybe (Tree Char)
+stringToTree ""  = Just Empty
+stringToTree [c] = Just $ Branch c Empty Empty
+stringToTree (c:cs) = do
+    cs' <- trimmedStr
+    (leftStr, rightStr) <- evalStateT (splitAtCorrectComma cs') (0, 0)
+    l <- stringToTree leftStr
+    r <- stringToTree (tail rightStr) --remove the leading ','
+    return $ Branch c l r
+  where
+    trimmedStr = removeEnclosingParathesis cs
+
+    removeEnclosingParathesis :: String -> Maybe String
+    removeEnclosingParathesis [] = Nothing
+    removeEnclosingParathesis [h] = Nothing
+    removeEnclosingParathesis (h:rest) = case (h, last rest) of
+      ('(', ')') -> Just $ take (length rest - 1) rest
+      _          -> Nothing
+
+    splitAtCorrectComma :: String -> StateT (Index, LeftParathesisEncountered) Maybe (String, String)
+    splitAtCorrectComma [] = lift Nothing
+    splitAtCorrectComma (c:rest) = do
+      (i, e) <- get
+      case (c, e) of
+        (',', 0) -> lift . fmap (splitAt i) $ trimmedStr
+        ('(', _) -> do
+          put (i + 1, e + 1)
+          splitAtCorrectComma rest
+        (')', n) -> do
+          put (i + 1, n - 1)
+          splitAtCorrectComma rest
+        (_, n) -> do
+          put (i + 1, n)
+          splitAtCorrectComma rest
+        _ -> lift Nothing
+
+
+

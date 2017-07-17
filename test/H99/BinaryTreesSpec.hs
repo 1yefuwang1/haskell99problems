@@ -4,6 +4,7 @@ import           Data.Set        as S
 import           H99.BinaryTrees
 import           Test.Hspec
 
+
 spec :: Spec
 spec =
   describe "Binary Trees tests" $ do
@@ -34,7 +35,7 @@ spec =
         S.fromList [Branch 'x' (Branch 'x' Empty (Branch 'x' Empty Empty)) (Branch 'x' (Branch 'x' Empty Empty) Empty),Branch 'x' (Branch 'x' (Branch 'x' Empty Empty) Empty) (Branch 'x' Empty (Branch 'x' Empty Empty))]
 
     it "Problem 59: hbalTree" $ do
-      hbalTree 0 `shouldBe` [(Empty :: Tree Char)]
+      hbalTree 0 `shouldBe` [Empty :: Tree Char]
       length (hbalTree 3) `shouldBe` 15
 
     it "Problem 60: hbalTreeNodes" $ do
@@ -56,7 +57,7 @@ spec =
     it "Problem 63: completeBinaryTree" $ do
       completeBinaryTree 4 `shouldBe` Branch 'x' (Branch 'x' (Branch 'x' Empty Empty) Empty) (Branch 'x' Empty Empty)
       isCompleteBinaryTree (completeBinaryTree 4) `shouldBe` True
-      isCompleteBinaryTree ((hbalTree 5) !! 2) `shouldBe` False
+      isCompleteBinaryTree (hbalTree 5 !! 2) `shouldBe` False
 
     it "Problem 64: layout" $ do
       layout (Branch 1 (Branch 2 Empty (Branch 4 Empty Empty)) (Branch 2 Empty Empty)) `shouldBe` Branch {value = (1,(3,1)), left = Branch {value = (2,(1,2)), left = Empty, right = Branch {value = (4,(2,3)), left = Empty, right = Empty}}, right = Branch {value = (2,(4,2)), left = Empty, right = Empty}}
@@ -64,3 +65,21 @@ spec =
     it "Probelm 65: layout'" $ do
       layout' (Branch 1 (Branch 2 (Branch 3 Empty Empty) (Branch 4 Empty Empty)) (Branch 2 Empty Empty))
         `shouldBe` Branch {value = (1,(4,1)), left = Branch {value = (2,(2,2)), left = Branch {value = (3,(1,3)), left = Empty, right = Empty}, right = Branch {value = (4,(3,3)), left = Empty, right = Empty}}, right = Branch {value = (2,(6,2)), left = Empty, right = Empty}}
+
+    it "Problem 66: layout'': not implemented for now" $ do
+      1 `shouldBe` 1
+
+    describe "Problem 67A: a string representation of binary trees" $ do
+      it "treeToString" $ do
+        treeToString (Empty :: Tree Char) `shouldBe` ""
+        treeToString
+          (Branch 'x' (Branch 'y' Empty Empty) (Branch 'a' Empty (Branch 'b' Empty Empty)))
+            `shouldBe` "x(y,a(,b))"
+
+      it "stringToTree" $ do
+        stringToTree "" `shouldBe` Just (Empty :: Tree Char)
+        stringToTree "x(y,a(,b))" `shouldBe`
+          Just (Branch 'x' (Branch 'y' Empty Empty) (Branch 'a' Empty (Branch 'b' Empty Empty)))
+
+
+
