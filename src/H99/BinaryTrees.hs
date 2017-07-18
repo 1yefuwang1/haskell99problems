@@ -656,11 +656,6 @@ type InOrderSeq = String
 preInTree :: PreOrderSeq -> InOrderSeq -> Tree Char
 preInTree [] [] = Empty
 
-preInTree [p] [i] =
-  if p == i
-    then Branch p Empty Empty
-    else error "invalid input sequence"
-
 preInTree (h:preorder) inorder =
   let
     (l, r') = span (/=h) inorder
