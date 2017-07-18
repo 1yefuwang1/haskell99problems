@@ -81,5 +81,11 @@ spec =
         stringToTree "x(y,a(,b))" `shouldBe`
           Just (Branch 'x' (Branch 'y' Empty Empty) (Branch 'a' Empty (Branch 'b' Empty Empty)))
 
+    it "Problem 68: preorder and inorder sequences" $ do
+      let Just t = stringToTree "a(b(d,e),c)"
+          po = preorder t
+          io = inorder t
+      preInTree po io `shouldBe` t
+
 
 
