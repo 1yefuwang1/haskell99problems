@@ -87,5 +87,10 @@ spec =
           io = inorder t
       preInTree po io `shouldBe` t
 
+    it "Problem 69: dotstring representation of binary trees" $ do
+      let dotstring = "xy..z0..."
+      tree2ds (ds2tree dotstring) `shouldBe` dotstring
 
+      let dotstring2 = "abd..e..c.fg..."
+      tree2ds (ds2tree dotstring2) `shouldBe` dotstring2
 

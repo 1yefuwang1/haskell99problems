@@ -667,3 +667,41 @@ preInTree (h:preorder) inorder =
 preInTree _ _ = error "invalid input sequence"
 
 
+{-
+ Problem 69
+Dotstring representation of binary trees.
+
+We consider again binary trees with nodes that are identified by single lower-case letters, as in the example of problem P67. Such a tree can be represented by the preorder sequence of its nodes in which dots (.) are inserted where an empty subtree (nil) is encountered during the tree traversal. For example, the tree shown in problem P67 is represented as 'abd..e..c.fg...'. First, try to establish a syntax (BNF or syntax diagrams) and then write a predicate tree_dotstring/2 which does the conversion in both directions. Use difference lists.
+
+Example in Haskell:
+
+> fst (ds2tree example)
+Branch 'a' (Branch 'b' (Branch 'd' Empty Empty) (Branch 'e' Empty Empty)) (Branch 'c' Empty (Branch 'f' (Branch 'g' Empty Empty) Empty))
+
+> tree2ds (Branch 'x' (Branch 'y' Empty Empty) (Branch 'z' (Branch '0' Empty Empty) Empty))
+"xy..z0..."
+-}
+tree2ds :: Tree Char -> String
+tree2ds Empty          = "."
+tree2ds (Branch c l r) = c : (tree2ds l ++ tree2ds r)
+
+ds2tree :: String -> Tree Char
+ds2tree "." = Empty
+ds2tree (h:rest) = Branch h l r
+  where
+    (l, remaining) = evalState consumeOneTree rest
+    r = ds2tree remaining
+
+    consumeOneTree :: State String (Tree Char, String)
+    consumeOneTree = do
+      (h:rest) <- get
+      case h of
+        '.' -> return (Empty, rest)
+        _ -> do
+          put rest
+          (l', rest') <- consumeOneTree
+          put rest'
+          (r', rest'') <- consumeOneTree
+          return (Branch h l' r', rest'')
+
+
