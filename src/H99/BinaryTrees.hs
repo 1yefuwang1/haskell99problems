@@ -681,6 +681,7 @@ Branch 'a' (Branch 'b' (Branch 'd' Empty Empty) (Branch 'e' Empty Empty)) (Branc
 > tree2ds (Branch 'x' (Branch 'y' Empty Empty) (Branch 'z' (Branch '0' Empty Empty) Empty))
 "xy..z0..."
 -}
+-- TODO: use difference list
 tree2ds :: Tree Char -> String
 tree2ds Empty          = "."
 tree2ds (Branch c l r) = c : (tree2ds l ++ tree2ds r)

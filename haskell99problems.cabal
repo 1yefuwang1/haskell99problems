@@ -18,6 +18,7 @@ library
   exposed-modules:     H99.Arithmetic
                      , H99.LogicAndCodes
                      , H99.BinaryTrees
+                     , H99.MultiwayTrees
   build-depends:       base >= 4.7 && < 5
                      , mtl
   default-language:    Haskell2010
