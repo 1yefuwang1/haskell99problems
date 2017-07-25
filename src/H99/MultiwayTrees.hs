@@ -74,3 +74,31 @@ stringToTree (h:rest) = Node h (evalState consume ([], take (length rest - 1) re
                 consumeOneNode rest' [Node v (c ++ [Node h ([] ++ t')])]
 
 
+{-
+Problem 71
+(*) Determine the internal path length of a tree.
+
+We define the internal path length of a multiway tree as the total sum of the path lengths from the root to all nodes of the tree. By this definition, tree5 has an internal path length of 9.
+
+Example in Haskell:
+
+Tree> ipl tree5
+9
+Tree> ipl tree4
+2
+-}
+type Depth = Int
+ipl :: Tree a -> Int
+ipl t = evalState go (0, t)
+  where
+    go :: State (Depth, Tree a) Int
+    go = do
+      (depth, t) <- get
+      case t of
+        Node _ [] -> return depth
+        Node _ cs -> return $ (+depth) . sum $ map (evalState go) [(depth + 1, c) | c <- cs]
+
+
+
+
+

@@ -44,3 +44,9 @@ spec =
           stringToTree "afg^^c^bd^e^^^" `shouldBe` tree5
         it "should work with tree6 string: afg^^c^bd^eh^^^^" $ do
           stringToTree "afg^^c^bd^eh^^^^" `shouldBe` tree6
+
+      describe "Problem 71: Determine the internal path length of a tree" $ do
+        it "should work with tree5" $ do
+          ipl tree5 `shouldBe` 9
+        it "should work with tree4" $ do
+          ipl tree4 `shouldBe` 2
