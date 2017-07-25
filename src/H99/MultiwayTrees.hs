@@ -109,5 +109,4 @@ Example in Haskell:
 Tree> bottom_up tree5
 -}
 bottomUp :: Tree Char -> String
-bottomUp (Node ch []) = [ch]
 bottomUp (Node ch cs) = concatMap bottomUp cs ++ [ch]
