@@ -98,7 +98,16 @@ ipl t = evalState go (0, t)
         Node _ [] -> return depth
         Node _ cs -> return $ (+depth) . sum $ map (evalState go) [(depth + 1, c) | c <- cs]
 
+{-
+Problem 72
+(*) Construct the bottom-up order sequence of the tree nodes.
 
+Write a predicate bottom_up(Tree,Seq) which constructs the bottom-up sequence of the nodes of the multiway tree Tree.
 
+Example in Haskell:
 
-
+Tree> bottom_up tree5
+-}
+bottomUp :: Tree Char -> String
+bottomUp (Node ch []) = [ch]
+bottomUp (Node ch cs) = concatMap bottomUp cs ++ [ch]

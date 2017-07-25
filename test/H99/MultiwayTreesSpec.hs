@@ -50,3 +50,7 @@ spec =
           ipl tree5 `shouldBe` 9
         it "should work with tree4" $ do
           ipl tree4 `shouldBe` 2
+
+      describe "Problem 72: Construct the bottom-up order sequence of the tree nodes" $ do
+        it "should work with tree5" $ do
+          bottomUp tree5 `shouldBe` "gfcdeba"
