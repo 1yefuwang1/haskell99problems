@@ -142,3 +142,5 @@ As a second, even more interesting exercise try to rewrite tree_ltl/2 in a way t
 lisp :: Tree Char -> String
 lisp (Node v []) = [v]
 lisp (Node v cs) = '(' : ([v, ' '] ++ unwords (map lisp cs) ++ ")")
+
+--TODO: added function that parse a lisp-like representation into Tree Char
