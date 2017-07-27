@@ -54,3 +54,10 @@ spec =
       describe "Problem 72: Construct the bottom-up order sequence of the tree nodes" $ do
         it "should work with tree5" $ do
           bottomUp tree5 `shouldBe` "gfcdeba"
+
+      describe "Problem 73: Lisp-like tree representation" $ do
+        it "should work with tree4" $ do
+          lisp tree4 `shouldBe` "(b d e)"
+
+        it "should work with tree5" $ do
+          lisp tree5 `shouldBe` "(a (f g) c (b d e))"
