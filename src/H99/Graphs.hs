@@ -6,7 +6,7 @@ type Nodes a = [Node a]
 type Edges a = [Edge a]
 
 data Graph a
-  = Graph (Nodes a, Edges a)
+  = Graph (Nodes a) (Edges a)
   | Adj [(Node a, Nodes a)]
   deriving (Show, Eq)
 
@@ -22,11 +22,28 @@ graphToAdj Graph ['b','c','d','f','g','h','k'] [('b','c'),('b','f'),('c','f'),('
 Adj [('b', "cf"), ('c', "bf"), ('d', ""), ('f', "bck"), ('g', "h"), ('h', "g"), ('k', "f")]
 -}
 graphToAdj :: Eq a => Graph a -> Graph a
-graphToAdj (Graph ([], [])) = Adj []
-graphToAdj (Graph (nodes, edges)) = Adj $ do
+graphToAdj (Graph [] []) = Adj []
+graphToAdj (Graph nodes edges) = Adj $ do
   n <- nodes
   let es = map f $ filter (\(n1, n2) -> n1 == n || n2 ==n) edges
       f (n1, n2)
         | n1 == n = n2
         | n2 == n = n1
   return (n, es)
+
+{-
+Problem 81
+(**) Path from one node to another one
+
+Write a function that, given two nodes a and b in a graph, returns all the acyclic paths from a to b.
+
+Example in Haskell:
+
+paths 1 4 [(1,2),(2,3),(1,3),(3,4),(4,2),(5,6)]
+[[1,2,3,4],[1,3,4]]
+paths 2 6 [(1,2),(2,3),(1,3),(3,4),(4,2),(5,6)]
+[]
+-}
+
+paths :: Int -> Int -> Graph Int -> [[Int]]
+paths from to (Graph ns es) = undefined

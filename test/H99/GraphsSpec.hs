@@ -3,7 +3,7 @@ module H99.GraphsSpec (spec) where
 import           H99.Graphs
 import           Test.Hspec
 
-graph1 = Graph (['b','c','d','f','g','h','k'], [('b','c'),('b','f'),('c','f'),('f','k'),('g','h')])
+graph1 = Graph ['b','c','d','f','g','h','k'] [('b','c'),('b','f'),('c','f'),('f','k'),('g','h')]
 
 spec :: Spec
 spec =
