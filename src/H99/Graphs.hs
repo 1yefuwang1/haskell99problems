@@ -1,5 +1,7 @@
 module H99.Graphs where
 
+import           Control.Monad.State
+
 type Node a = a
 type Edge a = (a, a)
 type Nodes a = [Node a]
@@ -46,4 +48,32 @@ paths 2 6 [(1,2),(2,3),(1,3),(3,4),(4,2),(5,6)]
 -}
 
 paths :: Int -> Int -> Graph Int -> [[Int]]
-paths from to (Graph ns es) = undefined
+paths from to g = evalState (go from to g) [from]
+  where
+    go :: Int
+       -> Int
+       -> Graph Int
+       -> State [Int] [[Int]] -- State [Int] records the nodes that
+                              -- has been traversed to eliminate acyclic go
+    go from to (Graph ns es) = do
+      visited <- get
+      if from == to
+        then
+          return $ return [to]
+        else do
+          let
+            adjNodes =
+              foldr
+                (\(n1, n2) acc ->
+                  if n1 == from && n2 `notElem` visited
+                    then n2 : acc
+                    else if n2 == from && n1 `notElem` visited
+                      then n1 : acc
+                      else acc)
+                []
+                es
+          return $ do
+            adjNode <- adjNodes
+            path <- evalState (go adjNode to (Graph ns es)) (adjNode:visited)
+            return $ from : path
+
