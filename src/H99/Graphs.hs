@@ -48,7 +48,7 @@ paths 2 6 [(1,2),(2,3),(1,3),(3,4),(4,2),(5,6)]
 -}
 
 paths :: Int -> Int -> Graph Int -> [[Int]]
-paths from to g = evalState (go from to g) [from]
+paths from to g = evalState (go from to g) []
   where
     go :: Int
        -> Int
@@ -56,6 +56,7 @@ paths from to g = evalState (go from to g) [from]
        -> State [Int] [[Int]] -- State [Int] records the nodes that
                               -- has been traversed to eliminate acyclic go
     go from to (Graph ns es) = do
+      modify (from:)
       visited <- get
       if from == to
         then
@@ -74,6 +75,6 @@ paths from to g = evalState (go from to g) [from]
                 es
           return $ do
             adjNode <- adjNodes
-            path <- evalState (go adjNode to (Graph ns es)) (adjNode:visited)
+            path <- evalState (go adjNode to (Graph ns es)) visited
             return $ from : path
 
