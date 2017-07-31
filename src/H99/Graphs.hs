@@ -1,3 +1,4 @@
+{-# LANGUAGE MultiWayIf #-}
 module H99.Graphs where
 
 import           Control.Monad.State
@@ -66,15 +67,12 @@ paths from to g = evalState (go from to g) []
             adjNodes =
               foldr
                 (\(n1, n2) acc ->
-                  if n1 == from && n2 `notElem` visited
-                    then n2 : acc
-                    else if n2 == from && n1 `notElem` visited
-                      then n1 : acc
-                      else acc)
+                  if | n1 == from && n2 `notElem` visited -> n2 : acc
+                     | n2 == from && n1 `notElem` visited -> n1 : acc
+                     | otherwise -> acc)
                 []
                 es
           return $ do
             adjNode <- adjNodes
             path <- evalState (go adjNode to (Graph ns es)) visited
             return $ from : path
-
