@@ -76,3 +76,27 @@ paths from to g = evalState (go from to g) []
             adjNode <- adjNodes
             path <- evalState (go adjNode to (Graph ns es)) visited
             return $ from : path
+
+{-
+Problem 82
+(*) Cycle from a given node
+
+Write a predicate cycle(G,A,P) to find a closed path (cycle) P starting at a given node A in the graph G. The predicate should return all cycles via backtracking.
+
+Example in Haskell:
+
+graph> cycle 2 [(1,2),(2,3),(1,3),(3,4),(4,2),(5,6)]
+[[2,3,4,2]]
+graph> cycle 1 [(1,2),(2,3),(1,3),(3,4),(4,2),(5,6)]
+[]
+-}
+cycle' :: Int -> Graph Int -> [[Int]]
+cycle' from g@(Graph ns es) = do
+    let
+      adjNodes = filter (\n -> (from, n) `elem` es || (n, from) `elem` es) ns
+    n <- adjNodes
+    path <- filter ((/=n) . secondLast) $ paths n from g
+    return $ from:path
+  where
+    secondLast [x, y] = x
+    secondLast (x:xs) = secondLast xs
