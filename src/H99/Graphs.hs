@@ -1,7 +1,9 @@
 {-# LANGUAGE MultiWayIf #-}
 module H99.Graphs where
 
+import           Control.Exception   (assert)
 import           Control.Monad.State
+import qualified H99.MultiwayTrees   as T
 
 type Node a = a
 type Edge a = (a, a)
@@ -100,3 +102,33 @@ cycle' from g@(Graph ns es) = do
   where
     secondLast [x, y] = x
     secondLast (x:xs) = secondLast xs
+
+{-
+Construct all spanning trees
+
+Write a predicate s_tree(Graph,Tree) to construct (by backtracking) all spanning trees of a given graph.
+With this predicate, find out how many spanning trees there are for the graph depicted to the left.
+The data of this example graph can be found in the file p83.dat.
+When you have a correct solution for the s_tree/2 predicate,
+use it to define two other useful predicates: is_tree(Graph) and is_connected(Graph).
+Both are five-minutes tasks!
+length $ spantree k4
+16
+-}
+spantree :: Graph a -> Maybe [T.Tree a]
+spantree (Graph [n] []) = Just [T.Node n []]
+spantree (Graph [] _)   = Nothing
+spantree (Graph _ [])   = Nothing
+spantree (Graph ns es) =  do
+  let
+    maybeTrees =
+      [ runState go ([n], es)
+      | n <- ns
+      ]
+    maybeTrees' = sequence maybeTrees
+  case maybeTrees' of
+    Nothing        -> Nothing
+    Just spantrees -> Just [T.Node (head ns) st | st <- spantrees]
+ where
+  go :: State [a] (Maybe [T.Tree a])
+  go = undefined

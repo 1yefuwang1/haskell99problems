@@ -1,7 +1,8 @@
 module H99.GraphsSpec (spec) where
 
-import qualified Data.Set   as Set
+import qualified Data.Set          as Set
 import           H99.Graphs
+import           H99.MultiwayTrees as T
 import           Test.Hspec
 
 graph1 = Graph ['b','c','d','f','g','h','k'] [('b','c'),('b','f'),('c','f'),('f','k'),('g','h')]
@@ -28,3 +29,7 @@ spec =
 
       it "should work when running with 5" $ do
         cycle' 5 g `shouldBe` []
+
+    describe "Problem 83: Construct all spanning trees" $ do
+      it "should return [] when called with g" $ do
+        spantree g `should` Nothing
