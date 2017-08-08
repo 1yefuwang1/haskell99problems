@@ -32,4 +32,4 @@ spec =
 
     describe "Problem 83: Construct all spanning trees" $ do
       it "should return [] when called with g" $ do
-        spantree g `should` Nothing
+        spantree g `shouldBe` []

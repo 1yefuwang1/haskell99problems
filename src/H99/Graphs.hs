@@ -115,20 +115,19 @@ Both are five-minutes tasks!
 length $ spantree k4
 16
 -}
-spantree :: Graph a -> Maybe [T.Tree a]
-spantree (Graph [n] []) = Just [T.Node n []]
-spantree (Graph [] _)   = Nothing
-spantree (Graph _ [])   = Nothing
+spantree :: Eq a => Graph a -> [T.Tree a]
+spantree (Graph [n] []) = [T.Node n []]
+spantree (Graph [] _)   = []
+spantree (Graph _ [])   = []
 spantree (Graph ns es) =  do
+  n <- ns
   let
-    maybeTrees =
-      [ runState go ([n], es)
-      | n <- ns
-      ]
-    maybeTrees' = sequence maybeTrees
-  case maybeTrees' of
-    Nothing        -> Nothing
-    Just spantrees -> Just [T.Node (head ns) st | st <- spantrees]
+    ns' = [n' | n' <- ns, n' /= n]
+    adjNodes = [n' | n' <- ns', (n, n') `elem` es || (n', n) `elem` es]
+  adjNode <- adjNodes
+  tree <- go [n]  adjNodes es
+  return $ T.Node n tree
+
  where
-  go :: State [a] (Maybe [T.Tree a])
-  go = undefined
+  go :: Nodes a -> Nodes a -> Edges a -> [T.Tree a]
+  go visitedNodes adjNodes edges = undefined
