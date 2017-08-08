@@ -1,8 +1,10 @@
-{-# LANGUAGE MultiWayIf #-}
+{-# LANGUAGE InstanceSigs #-}
+{-# LANGUAGE MultiWayIf   #-}
 module H99.Graphs where
 
 import           Control.Exception   (assert)
 import           Control.Monad.State
+import           Data.List           (nub, sort)
 import qualified H99.MultiwayTrees   as T
 
 type Node a = a
@@ -13,7 +15,28 @@ type Edges a = [Edge a]
 data Graph a
   = Graph (Nodes a) (Edges a)
   | Adj [(Node a, Nodes a)]
-  deriving (Show, Eq)
+  deriving (Show)
+
+normalize :: (Eq a, Ord a) => Edges a -> Edges a
+normalize =
+  foldr
+    (\(a, b) acc ->
+      if a > b then (b, a) : acc else (a, b) : acc
+    )
+    []
+normalize' :: (Eq a, Ord a) => Edges a -> Edges a
+normalize' = sort . normalize
+
+
+instance (Eq a, Ord a) => Eq (Graph a) where
+  (==) ::  Graph a -> Graph a -> Bool
+  Graph ns es == Graph ns' es' = (sort ns == sort ns') && es `equals` es'
+    where
+      equals :: (Eq a, Ord a) => Edges a -> Edges a -> Bool
+      left `equals` right = normalize' left == normalize' right
+
+  Adj es == Adj es' = es == es'
+  _ == _ = False
 
 {-
 Problem 80
@@ -104,6 +127,7 @@ cycle' from g@(Graph ns es) = do
     secondLast (x:xs) = secondLast xs
 
 {-
+Problem 83
 Construct all spanning trees
 
 Write a predicate s_tree(Graph,Tree) to construct (by backtracking) all spanning trees of a given graph.
@@ -115,19 +139,34 @@ Both are five-minutes tasks!
 length $ spantree k4
 16
 -}
-spantree :: Eq a => Graph a -> [T.Tree a]
-spantree (Graph [n] []) = [T.Node n []]
-spantree (Graph [] _)   = []
-spantree (Graph _ [])   = []
-spantree (Graph ns es) =  do
-  n <- ns
-  let
-    ns' = [n' | n' <- ns, n' /= n]
-    adjNodes = [n' | n' <- ns', (n, n') `elem` es || (n', n) `elem` es]
-  adjNode <- adjNodes
-  tree <- go [n]  adjNodes es
-  return $ T.Node n tree
+-- To simplify the problem, I use a Graph, which satisfy invariant: |V| -1 == |E|, to represent a spanning tree.
+spantree :: (Eq a, Ord a) => Graph a -> [Graph a]
+spantree g@(Graph ns es) = nub $ go [] ns [] g
+  where
+    go :: Eq a
+       => Nodes a  -- visited nodes
+       -> Nodes a  -- unvisited nodes
+       -> Edges a  -- collected edges so far
+       -> Graph a  -- graph
+       -> [Graph a]
+    go visited [] edges (Graph ns es) = assert (length visited == length ns && length ns -1 == length es) $
+      return $ Graph visited edges
 
- where
-  go :: Nodes a -> Nodes a -> Edges a -> [T.Tree a]
-  go visitedNodes adjNodes edges = undefined
+    go [] unvisited [] g@(Graph ns es) = assert (unvisited == ns) $ do
+      -- n <- unvisited
+      let n = head unvisited
+      go [n] [n' | n' <- unvisited, n' /= n] [] g
+
+    go visited unvisited edges g@(Graph ns es) = do
+      let
+        adjEdges = [(n', n'') | n' <- unvisited, n'' <- visited, (n', n'') `elem` es || (n'', n') `elem` es]
+      adjEdge <- adjEdges
+      let
+        (fst', snd') = adjEdge
+        (visited', unvisited') =
+          if fst' `elem` visited
+            then (fst', snd')
+            else assert (snd' `elem` visited) (snd', fst')
+      go (unvisited':visited) [n' | n' <- unvisited, unvisited' /= n'] (adjEdge:edges) g
+
+
