@@ -4,7 +4,7 @@ module H99.Graphs where
 
 import           Control.Exception   (assert)
 import           Control.Monad.State
-import           Data.List           (nub, sort)
+import           Data.List           (minimumBy, nub, sort)
 import qualified H99.MultiwayTrees   as T
 
 type Node a = a
@@ -37,6 +37,32 @@ instance (Eq a, Ord a) => Eq (Graph a) where
 
   Adj es == Adj es' = es == es'
   _ == _ = False
+
+type LabelledEdge a b = (a, a, b)
+data LabelledGraph a b
+  = LabelledGraph
+    { nodes :: Nodes a
+    , edges :: [LabelledEdge a b]
+    }
+  deriving (Show)
+
+instance (Eq a, Ord a, Eq b, Ord b) => Eq (LabelledGraph a b) where
+  (==) :: LabelledGraph a b -> LabelledGraph a b -> Bool
+  LabelledGraph ns es == LabelledGraph ns' es' = (sort ns == sort ns') && es `equals` es'
+    where
+      equals :: (Eq a, Ord a, Eq b, Ord b) => [LabelledEdge a b] -> [LabelledEdge a b] -> Bool
+      left `equals` right = normalize' left == normalize' right
+        where
+          normalize' :: (Eq a, Ord a, Eq b, Ord b) => [LabelledEdge a b] -> [LabelledEdge a b]
+          normalize' = sort . normalize
+
+          normalize :: (Eq a, Ord a, Eq b, Ord b) => [LabelledEdge a b] -> [LabelledEdge a b]
+          normalize =
+            foldr
+              (\(from, to, value) acc ->
+                if from > to then (to, from, value) : acc else (from, to, value) : acc
+              )
+              []
 
 {-
 Problem 80
@@ -174,5 +200,54 @@ isTree = (== 1) . length . spantree
 
 isConnected :: (Eq a, Ord a) => Graph a -> Bool
 isConnected = not . null . spantree
+
+{-
+Problem 84
+(**) Construct the minimal spanning tree
+
+Write a predicate ms_tree(Graph,Tree,Sum) to construct the minimal spanning tree of a given labelled graph. Hint: Use the algorithm of Prim. A small modification of the solution of P83 does the trick. The data of the example graph to the right can be found in the file p84.dat.
+
+Example in Haskell:
+
+prim [1,2,3,4,5] [(1,2,12),(1,3,34),(1,5,78),(2,4,55),(2,5,32),(3,4,61),(3,5,44),(4,5,93)]
+[(1,2,12),(1,3,34),(2,4,55),(2,5,32)]
+-}
+-- still use a LabelledGraph to represent the minimal spanning tree
+prim :: (Eq a, Ord a, Eq b, Ord b) => LabelledGraph a b -> LabelledGraph a b
+prim g@(LabelledGraph ns es) = go [] ns [] g
+  where
+    go :: (Eq a, Ord a, Eq b, Ord b)
+       => Nodes a  -- visited nodes
+       -> Nodes a  -- unvisited nodes
+       -> [LabelledEdge a b]  -- collected edges so far
+       -> LabelledGraph a b -- graph
+       -> LabelledGraph a b
+    go visited [] edges (LabelledGraph ns es) = assert (length visited == length ns && length ns -1 == length es) $
+      LabelledGraph visited edges
+
+    go [] unvisited [] g@(LabelledGraph ns es) = assert (unvisited == ns) $
+      let
+        n = head unvisited
+      in
+      go [n] [n' | n' <- unvisited, n' /= n] [] g
+
+    go visited unvisited edges g@(LabelledGraph ns es) =
+      let
+        adjEdges =
+          [(n', n'', v)
+          | n' <- unvisited
+          , n'' <- visited
+          , (n1, n2, v) <- es
+          , (n', n'') == (n1, n2) || (n'', n') == (n1, n2)
+          ]
+        minAdjEdge = minimumBy (\(_, _, v) (_, _, v') -> compare v v') adjEdges
+        (fst', snd', v) = minAdjEdge
+        (visited', unvisited', value) =
+          if fst' `elem` visited
+            then (fst', snd', v)
+            else assert (snd' `elem` visited) (snd', fst', v)
+      in
+      go (unvisited':visited) [n' | n' <- unvisited, unvisited' /= n'] (minAdjEdge:edges) g
+
 
 

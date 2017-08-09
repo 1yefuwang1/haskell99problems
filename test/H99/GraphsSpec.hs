@@ -11,7 +11,7 @@ g = Graph [1,2,3,4,5,6] [(1,2),(2,3),(1,3),(3,4),(4,2),(5,6)]
 spec :: Spec
 spec =
   describe "Graph Tests" $ do
-    describe "Problem 80: Conversions" $ do
+    describe "Problem 80: Conversions" $
       it "should convert graph term to Adj term" $
         graphToAdj graph1 `shouldBe`
           Adj [('b', "cf"), ('c', "bf"), ('d', ""), ('f', "bck"), ('g', "h"), ('h', "g"), ('k', "f")]
@@ -56,3 +56,9 @@ spec =
 
         it "should return False when called on g" $
           isConnected g `shouldBe` False
+
+    describe "Problem 84: Construct the minimal spanning tree of labelled graphs" $ do
+      let lg = LabelledGraph
+                [1,2,3,4,5] [(1,2,12),(1,3,34),(1,5,78),(2,4,55),(2,5,32),(3,4,61),(3,5,44),(4,5,93)]
+      it "should work with given example" $
+        prim lg `shouldBe` LabelledGraph [1,2,3,4,5] [(1,2,12),(1,3,34),(2,4,55),(2,5,32)]
