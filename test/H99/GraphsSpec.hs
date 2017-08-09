@@ -42,3 +42,17 @@ spec =
 
       it "should work with g2" $
         spantree g2 `shouldBe` [Graph [1,2,3] [(3,2),(2,1)],Graph [3,2,1] [(3,1),(2,1)],Graph [2,3,1] [(2,3),(3,1)]]
+
+      describe "testing isTree" $ do
+        it "should return True when called on tree1, g1" $
+          map isTree [tree1, g1] `shouldBe` replicate 2 True
+
+        it "should return False when called on g1, g2 ,g" $
+          map isTree [g2, g] `shouldBe` replicate 2 False
+
+      describe "testing isConnected" $ do
+        it "should return True when called on g1, g2, tree1" $
+          map isConnected [g1, g2, tree1] `shouldBe` replicate 3 True
+
+        it "should return False when called on g" $
+          isConnected g `shouldBe` False

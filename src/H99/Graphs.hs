@@ -169,4 +169,10 @@ spantree g@(Graph ns es) = nub $ go [] ns [] g
             else assert (snd' `elem` visited) (snd', fst')
       go (unvisited':visited) [n' | n' <- unvisited, unvisited' /= n'] (adjEdge:edges) g
 
+isTree :: (Eq a, Ord a) => Graph a -> Bool
+isTree = (== 1) . length . spantree
+
+isConnected :: (Eq a, Ord a) => Graph a -> Bool
+isConnected = not . null . spantree
+
 
