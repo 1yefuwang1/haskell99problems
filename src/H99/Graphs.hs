@@ -253,6 +253,10 @@ prim g@(LabelledGraph ns es) = go [] ns [] g
       go (unvisited':visited) [n' | n' <- unvisited, unvisited' /= n'] (minAdjEdge:edges) g
 
 {-
+<<<<<<< HEAD
+=======
+Problem 85
+>>>>>>> Added Problem 85: Graph isomorphism
 Graph isomorphism
 
 Two graphs G1(N1,E1) and G2(N2,E2) are isomorphic if there is a bijection f: N1 -> N2 such that for any nodes X,Y of N1, X and Y are adjacent if and only if f(X) and f(Y) are adjacent.
@@ -276,7 +280,11 @@ iso left@(Graph ns es) right@(Graph ns' es')
   where
     isTrue = id
 
+<<<<<<< HEAD
     -- transform the `Graph` according to the given mapping
+=======
+    -- transform the right Graph according to the given mapping
+>>>>>>> Added Problem 85: Graph isomorphism
     transform :: Mapping b a -> Graph a
     transform mapping = Graph ns'' es''
       where
