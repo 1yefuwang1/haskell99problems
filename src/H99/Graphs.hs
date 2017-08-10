@@ -280,11 +280,7 @@ iso left@(Graph ns es) right@(Graph ns' es')
   where
     isTrue = id
 
-<<<<<<< HEAD
-    -- transform the `Graph` according to the given mapping
-=======
     -- transform the right Graph according to the given mapping
->>>>>>> Added Problem 85: Graph isomorphism
     transform :: Mapping b a -> Graph a
     transform mapping = Graph ns'' es''
       where
