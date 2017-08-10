@@ -62,3 +62,16 @@ spec =
                 [1,2,3,4,5] [(1,2,12),(1,3,34),(1,5,78),(2,4,55),(2,5,32),(3,4,61),(3,5,44),(4,5,93)]
       it "should work with given example" $
         prim lg `shouldBe` LabelledGraph [1,2,3,4,5] [(1,2,12),(1,3,34),(2,4,55),(2,5,32)]
+
+    describe "Problem 85: Graph isomorphism" $ do
+      let
+        g1 = Graph [1,2,3,4,5,6,7,8] [(1,5),(1,6),(1,7),(2,5),(2,6),(2,8),(3,5),(3,7),(3,8),(4,6),(4,7),(4,8)]
+        g2 = Graph [1,2,3,4,5,6,7,8] [(1,2),(1,4),(1,5),(6,2),(6,5),(6,7),(8,4),(8,5),(8,7),(3,2),(3,4),(3,7)]
+        g3 = Graph [1,2,3,4,5,6,7,8] [(1,5),(1,6),(1,7),(2,5),(2,4),(2,8),(3,5),(3,7),(3,8),(4,6),(4,7),(4,8)]
+      it "should return True when called on g1 g2" $
+        iso g1 g2 `shouldBe` True
+      it "should return False when called on g1 g" $
+        iso g1 g `shouldBe` False
+      it "should return False when called on g1 g3" $
+        iso g1 g3 `shouldBe` False
+

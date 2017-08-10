@@ -1,10 +1,13 @@
-{-# LANGUAGE InstanceSigs #-}
-{-# LANGUAGE MultiWayIf   #-}
+{-# LANGUAGE InstanceSigs        #-}
+{-# LANGUAGE MultiWayIf          #-}
+{-# LANGUAGE ScopedTypeVariables #-}
 module H99.Graphs where
 
 import           Control.Exception   (assert)
 import           Control.Monad.State
-import           Data.List           (minimumBy, nub, sort)
+import           Data.List           (minimumBy, nub, permutations, sort)
+import           Data.Map            ((!))
+import qualified Data.Map            as M
 import qualified H99.MultiwayTrees   as T
 
 type Node a = a
@@ -249,5 +252,41 @@ prim g@(LabelledGraph ns es) = go [] ns [] g
       in
       go (unvisited':visited) [n' | n' <- unvisited, unvisited' /= n'] (minAdjEdge:edges) g
 
+{-
+Graph isomorphism
 
+Two graphs G1(N1,E1) and G2(N2,E2) are isomorphic if there is a bijection f: N1 -> N2 such that for any nodes X,Y of N1, X and Y are adjacent if and only if f(X) and f(Y) are adjacent.
+
+Write a predicate that determines whether two graphs are isomorphic. Hint: Use an open-ended list to represent the function f.
+
+Example in Haskell:
+
+graphG1 = [1,2,3,4,5,6,7,8] [(1,5),(1,6),(1,7),(2,5),(2,6),(2,8),(3,5),(3,7),(3,8),(4,6),(4,7),(4,8)]
+graphH1 = [1,2,3,4,5,6,7,8] [(1,2),(1,4),(1,5),(6,2),(6,5),(6,7),(8,4),(8,5),(8,7),(3,2),(3,4),(3,7)]
+iso graphG1 graphH1
+True
+-}
+-- Because solution in Polynomial-time  to determining graph isomorphism is still subject to ongoing research,
+-- I exhaust every possible mapping below
+type Mapping a b = M.Map (Node a) (Node b)
+iso :: forall a b. (Eq a, Ord a, Eq b, Ord b) => Graph a -> Graph b -> Bool
+iso left@(Graph ns es) right@(Graph ns' es')
+  | (length ns, length es) /= (length ns', length es') = False
+  | otherwise = any isTrue $ map ((== left) . transform) mappings
+  where
+    isTrue = id
+
+    -- transform the `Graph` according to the given mapping
+    transform :: Mapping b a -> Graph a
+    transform mapping = Graph ns'' es''
+      where
+        ns'' = [mapping ! n | n <- ns']
+        es'' = [mapTuple (mapping !) (n1, n2) | (n1, n2) <- es']
+
+        mapTuple :: (b -> a) -> (b, b) -> (a, a)
+        mapTuple f (l, r) = (f l, f r)
+
+    -- mapping from ns' to ns
+    mappings :: [Mapping b a]
+    mappings =  [M.fromList (zip ns' perm) | perm <- permutations ns]
 
