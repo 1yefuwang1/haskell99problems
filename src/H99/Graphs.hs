@@ -280,7 +280,7 @@ iso left@(Graph ns es) right@(Graph ns' es')
   where
     isTrue = id
 
-    -- transform the right Graph according to the given mapping
+    -- transform the right-hand-side Graph according to the given mapping
     transform :: Mapping b a -> Graph a
     transform mapping = Graph ns'' es''
       where
