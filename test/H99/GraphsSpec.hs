@@ -1,5 +1,6 @@
 module H99.GraphsSpec (spec) where
 
+import           Data.List         (sort)
 import qualified Data.Set          as Set
 import           H99.Graphs
 import           H99.MultiwayTrees as T
@@ -74,4 +75,21 @@ spec =
         iso g1 g `shouldBe` False
       it "should return False when called on g1 g3" $
         iso g1 g3 `shouldBe` False
+
+    describe "Problem 86:  Node degree and graph coloration" $ do
+      let
+        g1 =
+          Graph ['a','b','c','d','e','f','g','h','i','j']
+            [('a','b'),('a','e'),('a','f'),('b','c'),('b','g'),('c','d'),('c','h'),
+             ('d','e'),('d','i'),('e','j'),('f','h'),('f','i'),('g','i'),('g','j'),('h','j')]
+        g2 = Graph ['a', 'b', 'c', 'd'] [('a', 'b'), ('b', 'c'), ('d', 'b'), ('d', 'c')]
+        g3 = Graph ['a', 'b', 'c'] [('a', 'b'), ('b', 'c'), ('a', 'c')]
+      it "should work with the given example" $
+        sort (kcolor g1) `shouldBe` [('a',1),('b',2),('c',1),('d',2),('e',3),('f',2),('g',1),('h',3),('i',3),('j',2)]
+
+      it "should work with g2" $
+        sort (kcolor g2) `shouldBe` [('a', 2), ('b', 1), ('c', 2), ('d', 3)]
+
+      it "should work with g3" $
+        sort (kcolor g3) `shouldBe` [('a', 1), ('b', 2), ('c', 3)]
 

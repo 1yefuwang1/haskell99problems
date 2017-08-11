@@ -5,10 +5,13 @@ module H99.Graphs where
 
 import           Control.Exception   (assert)
 import           Control.Monad.State
-import           Data.List           (minimumBy, nub, permutations, sort)
+import           Data.List           (foldl', minimumBy, nub, partition,
+                                      permutations, sort, sortBy)
 import           Data.Map            ((!))
 import qualified Data.Map            as M
+import           Data.Ord            (comparing)
 import qualified H99.MultiwayTrees   as T
+import           System.IO.Unsafe    (unsafePerformIO)
 
 type Node a = a
 type Edge a = (a, a)
@@ -294,3 +297,51 @@ iso left@(Graph ns es) right@(Graph ns' es')
     mappings :: [Mapping b a]
     mappings =  [M.fromList (zip ns' perm) | perm <- permutations ns]
 
+{-
+Problem 86
+(**) Node degree and graph coloration
+
+a) Write a predicate degree(Graph,Node,Deg) that determines the degree of a given node.
+
+b) Write a predicate that generates a list of all nodes of a graph sorted according to decreasing degree.
+
+c) Use Welch-Powell's algorithm to paint the nodes of a graph in such a way that adjacent nodes have different colors.
+
+Example in Haskell:
+
+kcolor ['a','b','c','d','e','f','g','h','i','j'] [('a','b'),('a','e'),('a','f'),('b','c'),('b','g'),('c','d'),('c','h'),('d','e'),('d','i'),('e','j'),('f','h'),('f','i'),('g','i'),('g','j'),('h','j')]
+[('a',1),('b',2),('c',1),('d',2),('e',3),('f',2),('g',1),('h',3),('i',3),('j',2)]
+-}
+type Color = Int
+type Degree = Int
+
+degree :: Eq a =>Graph a -> Node a -> Degree
+degree g@(Graph ns es) n = assert (n `elem` ns) $
+  foldr (\(n1, n2) acc -> if n1 == n || n2 == n then 1 + acc else acc) 0 es
+
+sortByDegreeDesc :: Eq a => Graph a -> [(a, Degree)]
+sortByDegreeDesc g@(Graph ns es) = sortBy (comparing (negate . snd)) [(n, degree g n) | n <- ns]
+
+kcolor :: forall a. (Eq a, Show a) => Graph a -> [(a, Color)]
+kcolor g@(Graph ns es) = go 1 (sortByDegreeDesc g) []
+  where
+    go :: Color -> [(a, Degree)] -> [(a, Color)] -> [(a, Color)]
+    go _ [] acc = acc
+    go color ds acc =
+      let
+        (currentNode, _) = head ds
+        isConnectedTo :: Node a -> Node a -> Bool
+        n1 `isConnectedTo` n2 = (n1, n2) `elem` es || (n2, n1) `elem` es
+        isConnectedToAll :: Node a -> Nodes a -> Bool
+        n1 `isConnectedToAll` ns = any (isConnectedTo n1) ns
+        (colorred, rest) =
+          foldl'
+            (\acc@(colorred', rest') element@(n, d) ->
+                if n `isConnectedToAll` fmap fst colorred'
+                  then (colorred', element : rest')
+                  else ((n, color) : colorred', rest')
+            )
+            ([(currentNode, color)], [])
+            (tail ds)
+      in
+        go (color + 1) (reverse rest) (colorred ++ acc)
