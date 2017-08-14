@@ -11,7 +11,6 @@ import           Data.Map            ((!))
 import qualified Data.Map            as M
 import           Data.Ord            (comparing)
 import qualified H99.MultiwayTrees   as T
-import           System.IO.Unsafe    (unsafePerformIO)
 
 type Node a = a
 type Edge a = (a, a)
@@ -342,3 +341,30 @@ kcolor g@(Graph ns es) = go 1 (sortByDegreeDesc g) []
             (tail ds)
       in
         go (color + 1) (reverse rest) (colorred ++ acc)
+
+{-
+Problem 87
+(**) Depth-first order graph traversal (alternative solution)
+
+Write a predicate that generates a depth-first order graph traversal sequence. The starting point should be specified, and the output should be a list of nodes that are reachable from this starting point (in depth-first order).
+
+Example in Haskell:
+
+depthfirst ([1,2,3,4,5,6,7], [(1,2),(2,3),(1,4),(3,4),(5,2),(5,4),(6,7)]) 1
+[1,2,3,4,5]
+-}
+depthFirst :: forall a. (Eq a, Show a) => Graph a -> Node a -> Nodes a
+depthFirst (Graph ns es) start = evalState (go start) []
+  where
+    go :: Node a -> State (Nodes a) (Nodes a)
+    go start = do
+      visited <- get
+      let adjNodes = [n | n <- ns, n `notElem` visited && ((n, start) `elem` es || (start, n) `elem` es)]
+      if | start `elem` visited -> return []
+         | null adjNodes -> do
+           put $ start : visited
+           return [start]
+         | otherwise -> do
+           put $ start : visited
+           rest' <-  sequence (fmap go adjNodes)
+           return $ start : concat rest'

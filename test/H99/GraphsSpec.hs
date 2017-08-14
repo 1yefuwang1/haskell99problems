@@ -93,3 +93,11 @@ spec =
       it "should work with g3" $
         sort (kcolor g3) `shouldBe` [('a', 1), ('b', 2), ('c', 3)]
 
+    describe "Problem 87: Depth-first order graph traversal (alternative solution)" $ do
+      let
+        g1 = Graph [1,2,3,4,5,6,7] [(1,2),(2,3),(1,4),(3,4),(5,2),(5,4),(6,7)]
+      it "should return [1,2,3,4,5] when called on g1 and 1" $
+        depthFirst g1 1 `shouldBe` [1, 2, 3, 4, 5]
+      it "should return [6,7] when called on g1 and 6" $
+        depthFirst g1 6 `shouldBe` [6, 7]
+
