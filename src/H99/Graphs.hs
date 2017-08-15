@@ -366,7 +366,7 @@ depthFirst (Graph ns es) start = evalState (go start) []
            return [start]
          | otherwise -> do
            put $ start : visited
-           rest' <-  sequence (fmap go adjNodes)
+           rest' <-  mapM go adjNodes
            return $ start : concat rest'
 
 {-
