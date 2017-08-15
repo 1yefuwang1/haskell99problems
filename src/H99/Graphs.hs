@@ -6,7 +6,7 @@ module H99.Graphs where
 import           Control.Exception   (assert)
 import           Control.Monad.State
 import           Data.List           (foldl', minimumBy, nub, partition,
-                                      permutations, sort, sortBy)
+                                      permutations, sort, sortBy, (\\))
 import           Data.Map            ((!))
 import qualified Data.Map            as M
 import           Data.Ord            (comparing)
@@ -368,3 +368,26 @@ depthFirst (Graph ns es) start = evalState (go start) []
            put $ start : visited
            rest' <-  sequence (fmap go adjNodes)
            return $ start : concat rest'
+
+{-
+Problem 88
+(**) Connected components (alternative solution)
+
+Write a predicate that splits a graph into its connected components.
+
+Example in Haskell:
+
+connectedcomponents ([1,2,3,4,5,6,7], [(1,2),(2,3),(1,4),(3,4),(5,2),(5,4),(6,7)])
+[[1,2,3,4,5][6,7]]
+-}
+connectedComponents :: forall a. (Eq a, Show a) => Graph a -> [Nodes a]
+connectedComponents g@(Graph ns es) = go ns
+  where
+    go :: Nodes a -> [Nodes a]
+    go [] = []
+    go unvisited =
+      let
+        visited = depthFirst g (head unvisited)
+        rest = unvisited \\ visited
+      in
+        visited : go rest

@@ -101,3 +101,10 @@ spec =
       it "should return [6,7] when called on g1 and 6" $
         depthFirst g1 6 `shouldBe` [6, 7]
 
+    describe "Problem 88:  Connected components (alternative solution)" $ do
+      let
+        g1 = Graph [1,2,3,4,5,6,7] [(1,2),(2,3),(1,4),(3,4),(5,2),(5,4),(6,7)]
+      it "should return [[1,2,3,4,5], [6,7]] when called on g1" $
+        connectedComponents g1 `shouldBe` [[1,2,3,4,5], [6,7]]
+
+
