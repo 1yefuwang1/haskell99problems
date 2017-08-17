@@ -7,7 +7,7 @@ import           Control.Exception   (assert)
 import           Control.Monad.State
 import           Data.List           (foldl', minimumBy, nub, partition,
                                       permutations, sort, sortBy, (\\))
-import           Data.Map            ((!))
+import           Data.Map            (notMember, (!))
 import qualified Data.Map            as M
 import           Data.Ord            (comparing)
 import qualified H99.MultiwayTrees   as T
@@ -391,3 +391,55 @@ connectedComponents g@(Graph ns es) = go ns
         rest = unvisited \\ visited
       in
         visited : go rest
+
+
+{-
+Bipartite graphs
+
+Write a predicate that finds out whether a given graph is bipartite.
+
+Example in Haskell:
+
+bipartite ([1,2,3,4,5],[(1,2),(2,3),(1,4),(3,4),(5,2),(5,4)])
+True
+bipartite ([1,2,3,4,5],[(1,2),(2,3),(1,4),(3,4),(5,2),(5,4),(1,3)])
+False
+-}
+data Color' = Red
+           | Blue
+           deriving (Eq, Show)
+
+type ColoredNodes a = M.Map (Node a) Color'
+
+bipartite :: forall a. Show a => Graph a -> Bool
+bipartite g@(Graph ns es) = runState bfs (starting, Red, M.singleton starting Red)
+  where
+    size = length ns
+    starting = head ns
+
+    bfs :: State (Node a, Color, ColoredNodes a) Bool
+    bfs = do
+      (curNode, curColor, colorred) <- get
+      let
+        anotherColor =
+          case curColor of
+            Red  -> Blue
+            Blue -> Red
+        adjNodes = [n | n <- ns, (n, curNode) `elem` es || (curNode, n) `elem` es]
+        adjNodeColors = [M.lookup adjNode colorred | adjNode <- adjNodes]
+
+        uncolorredAdjNodes = [n | n <- adjNodes, n `notMember` colorred]
+        colorred' = foldl' (\acc n -> M.insert n anotherColor acc) colorred uncolorredAdjNodes
+
+        hasSameColor :: [Maybe Color'] -> Bool
+        hasSameColor = any (\c -> case c of
+          Just color -> color == curColor
+          _          -> False)
+
+      if | M.size colorred == size
+            -> return True
+         | hasSameColor adjNodeColors
+            -> return False
+         | otherwise
+            -> undefined
+

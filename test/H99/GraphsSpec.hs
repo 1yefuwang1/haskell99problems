@@ -107,4 +107,13 @@ spec =
       it "should return [[1,2,3,4,5], [6,7]] when called on g1" $
         connectedComponents g1 `shouldBe` [[1,2,3,4,5], [6,7]]
 
+    describe "Problem 89: Bipartite graphs" $ do
+      let
+        g1 = Graph [1,2,3,4,5] [(1,2),(2,3),(1,4),(3,4),(5,2),(5,4)]
+        g2 = Graph [1,2,3,4,5] [(1,2),(2,3),(1,4),(3,4),(5,2),(5,4),(1,3)]
+      it "should return True when called on g1" $
+        bipartite g1 `shouldBe` True
+      it "should return False when called on g2" $
+        bipartite g2 `shouldBe` False
+
 
