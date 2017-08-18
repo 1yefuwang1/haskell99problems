@@ -411,13 +411,13 @@ data Color' = Red
 
 type ColoredNodes a = M.Map (Node a) Color'
 
-bipartite :: forall a. Show a => Graph a -> Bool
-bipartite g@(Graph ns es) = runState bfs (starting, Red, M.singleton starting Red)
+bipartite :: forall a. (Show a, Eq a, Ord a) => Graph a -> Bool
+bipartite g@(Graph ns es) = evalState bfs (starting, Red, M.singleton starting Red)
   where
     size = length ns
     starting = head ns
 
-    bfs :: State (Node a, Color, ColoredNodes a) Bool
+    bfs :: State (Node a, Color', ColoredNodes a) Bool
     bfs = do
       (curNode, curColor, colorred) <- get
       let
@@ -436,10 +436,11 @@ bipartite g@(Graph ns es) = runState bfs (starting, Red, M.singleton starting Re
           Just color -> color == curColor
           _          -> False)
 
-      if | M.size colorred == size
-            -> return True
-         | hasSameColor adjNodeColors
-            -> return False
-         | otherwise
-            -> undefined
+        colorredSize = M.size colorred
+
+      if | colorredSize == size -> return True
+         | null uncolorredAdjNodes && colorredSize /= size -> return False
+         | hasSameColor adjNodeColors -> return False
+         | otherwise ->
+           foldM (\acc n -> do put (n, anotherColor, colorred'); b <- bfs; return $ acc && b) True uncolorredAdjNodes
 
