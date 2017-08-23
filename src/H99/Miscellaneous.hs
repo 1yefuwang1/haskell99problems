@@ -1,6 +1,10 @@
 module H99.Miscellaneous where
 
-import           Control.Monad (guard, replicateM)
+import           Control.Monad       (foldM, guard, replicateM)
+import           Control.Monad.State
+import           Data.List           (sort)
+import           Data.Maybe          (fromMaybe)
+import           Debug.Trace         (trace)
 
 {-
 Eight queens problem
@@ -68,20 +72,24 @@ knightsTour :: Int -> [[(Int, Int)]]
 knightsTour size = go 1 [(1, 1)]
   where
     maxSteps = size^2
-
-    fs = replicateM 2 [(*1), (*(-1))]
-    nextSteps :: (Int, Int) -> [(Int, Int)]
-    nextSteps (x, y) = do
-      (x', y') <- [(1, 2), (2, 1)]
-      [f, f'] <- fs
-      return (x + f x', y + f' y')
-
-    isValid (x, y) = x >= 1 && x <= size && y >= 1 && y <= size
+    onBoard (x, y) = x >= 1 && x <= size && y >= 1 && y <= size
+    isValid coord acc = onBoard coord && coord `notElem` acc -- TODO: change O(n) `notElem`
+    getValidFor from acc = [s | s <- nextSteps from, isValid s acc]
 
     go :: Int -> [(Int, Int)] -> [[(Int, Int)]]
     go count acc | count == maxSteps = return $ reverse acc
     go count acc = do
-      next <- nextSteps (head acc)
-      guard $ isValid next && next `notElem` acc
+      let
+        allPos = getValidFor (head acc) acc -- using Warnsdorf's rule
+        sortedPos = map snd $ sort $ map (\p -> (length $ getValidFor p acc, p)) allPos
+      next <- sortedPos
       go (count + 1) (next : acc)
+
+
+fs = replicateM 2 [(*1), (*(-1))]
+nextSteps :: (Int, Int) -> [(Int, Int)]
+nextSteps (x, y) = do
+  (x', y') <- [(1, 2), (2, 1)]
+  [f, f'] <- fs
+  return (x + f x', y + f' y')
 
